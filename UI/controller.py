@@ -11,11 +11,34 @@ class Controller:
         self._listColor = []
 
     def fillDD(self):
-        pass
+
+        for c in self._model.getColori():
+            self._view._ddcolor.options.append(ft.dropdown.Option(c))
+
+
+        years= list(range(2015, 2018+1))
+        for y in years:
+            self._view._ddyear.options.append(ft.dropdown.Option(y))
+
+        self._view.update_page()
 
 
     def handle_graph(self, e):
-        pass
+        anno = self._view._ddyear.value
+        colore= self._view._ddcolor.value
+
+        if anno == "" or colore == "":
+            self._view._txtOut.controls.append(ft.Text(f"Inserire il campo mancante", color="red"))
+            return
+
+        annoInt= int(anno)
+        self._model.buildGraph(colore,anno)
+        self._view._txtOut.controls.append(ft.Text(f"Grafo correttamente creato."))
+        self._view._txtOut.controls.append(ft.Text(f"Il grafo contiene {self._model.getNumNodes()} vertici e "
+                                                   f"{self._model.getNumArchi()} archi."))
+
+        self._view.update_page()
+
 
 
 
