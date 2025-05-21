@@ -24,18 +24,35 @@ class Controller:
 
 
     def handle_graph(self, e):
+
+
         anno = self._view._ddyear.value
         colore= self._view._ddcolor.value
 
         if anno == "" or colore == "":
-            self._view._txtOut.controls.append(ft.Text(f"Inserire il campo mancante", color="red"))
+            self._view.txtOut.controls.append(ft.Text(f"Inserire il campo mancante", color="red"))
             return
 
-        annoInt= int(anno)
+
         self._model.buildGraph(colore,anno)
-        self._view._txtOut.controls.append(ft.Text(f"Grafo correttamente creato."))
-        self._view._txtOut.controls.append(ft.Text(f"Il grafo contiene {self._model.getNumNodes()} vertici e "
+        self.fillDDProduct()
+        self._view.txtOut.controls.append(ft.Text(f"Grafo correttamente creato."))
+        self._view.txtOut.controls.append(ft.Text(f"Il grafo contiene {self._model.getNumNodes()} vertici e "
                                                    f"{self._model.getNumArchi()} archi."))
+
+
+        for e in self._model.top3Edges():
+
+            self._view.txtOut.controls.append(
+                ft.Text(f"Arco da {e[0].Product_number} a {e[1].Product_number} con peso {e[2]["weight"]}"))
+        daStampare = []
+        for nodo in self._model.top3Ripetuti().items():
+            chiave,valore= nodo
+            if valore>1:
+                daStampare.append(chiave)
+
+        self._view.txtOut.controls.append(ft.Text(f"I nodi ripetuti sono: {daStampare}"))
+
 
         self._view.update_page()
 
@@ -43,8 +60,13 @@ class Controller:
 
 
     def fillDDProduct(self):
-        pass
+        for n in self._model._graph.nodes:
+            self._view._ddnode.options.append(ft.dropdown.Option(n.Product_number))
+        self._view.update_page()
 
 
     def handle_search(self, e):
-        pass
+        self._model.bestPath(int(self._view._ddnode.value))
+        self._view.txtOut.controls.append(ft.Text(f"Numero archi percorso più lungo: {len(self._model._solOttima)}")
+        )
+        self._view.update_page()

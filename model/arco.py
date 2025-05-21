@@ -9,3 +9,4 @@ class Arco:
     p1: Prodotto
     p2: Prodotto
     peso: int
+
